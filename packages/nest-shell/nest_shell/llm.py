@@ -87,13 +87,13 @@ class AnthropicBackend:
 
     Example::
 
-        backend = AnthropicBackend(model="claude-sonnet-4-20250514")
+        backend = AnthropicBackend(model="claude-sonnet-4-6")
         response = await backend.complete(messages)
     """
 
     def __init__(
         self,
-        model: str = "claude-sonnet-4-20250514",
+        model: str = "claude-sonnet-4-6",
         temperature: float = 0.7,
         max_tokens: int = 256,
         api_key: str | None = None,
@@ -128,7 +128,6 @@ class AnthropicBackend:
             model=self._model,
             system=system,
             messages=chat_messages,
-            temperature=self._temperature,
             max_tokens=self._max_tokens,
         )
         content_blocks = cast("list[Any]", getattr(response, "content", []))
