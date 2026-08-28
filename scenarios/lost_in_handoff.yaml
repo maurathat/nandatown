@@ -1,0 +1,70 @@
+# SPDX-License-Identifier: Apache-2.0
+# Lost in Handoff — measuring hop decay in multi-agent systems.
+#
+# This is a near-verbatim `shell_marketplace.yaml` clone with one experimental
+# change: the agents exchange a structured facts card instead of negotiating
+# prose. No factory work, no port work, no plugin wiring.
+#
+# The measurement bundle on this branch is intentionally additive. It uses the
+# custom template below rather than rewriting the shared marketplace templates:
+#   templates/agents/lost-in-handoff.yaml
+#
+# Verify the committed live trace offline:
+#   python scripts/hop_decay.py traces/lost_in_handoff_fresh.jsonl --rounds 5
+#
+# Re-run live if desired:
+#   export ANTHROPIC_API_KEY=...
+#   nest run scenarios/lost_in_handoff.yaml
+#   python scripts/hop_decay.py traces/lost_in_handoff.jsonl --rounds 5
+#
+# Mock negative control:
+#   set `agents.llm_model: mock` and re-run, or inspect the committed
+#   traces/lost_in_handoff_mock.jsonl artifact offline.
+name: lost_in_handoff
+description: "shell_marketplace with structured facts-card payloads for offline hop-preservation analysis."
+
+tier: 2
+seed: 42
+
+agents:
+  count: 6
+  brain: llm
+  llm_provider: anthropic
+  llm_model: claude-sonnet-4-20250514
+  template: lost-in-handoff
+  roles:
+    - name: buyer
+      count: 3
+    - name: seller
+      count: 3
+
+layers:
+  transport: in_memory
+  comms: nest_native
+  identity: did_key
+  registry: in_memory
+  auth: jwt
+  trust: score_average
+  payments: prepaid_credits
+  coordination: contract_net
+  negotiation: alternating_offers
+  memory: blackboard
+  privacy: noop
+  datafacts: datafacts_v1
+
+task:
+  type: marketplace
+  config:
+    rounds: 5
+
+failures:
+  message_drop: 0.0
+
+duration: "ticks: 3000"
+
+metrics:
+  - success_rate
+  - message_count
+
+output:
+  trace: ./traces/lost_in_handoff.jsonl
