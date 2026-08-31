@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # Lost in Handoff — measuring hop decay in multi-agent systems.
 #
-# This is a near-verbatim `shell_marketplace.yaml` clone with one experimental
-# change: the agents exchange a structured facts card instead of negotiating
-# prose. No factory work, no port work, no plugin wiring.
+# Adapted packaging fixture derived from the historical `78dbde5` scenario.
+# It is not byte-identical to that scenario: the additive branch uses the
+# dedicated `lost-in-handoff` template rather than `template: auto`, and this
+# fixture carries packaging-oriented comments/output metadata.
 #
 # The measurement bundle on this branch is intentionally additive. It uses the
 # custom template below rather than rewriting the shared marketplace templates:
@@ -14,8 +15,8 @@
 #
 # Re-run live if desired:
 #   export ANTHROPIC_API_KEY=...
-#   nest run scenarios/lost_in_handoff.yaml
-#   python scripts/hop_decay.py traces/lost_in_handoff.jsonl --rounds 5
+#   nest run tests/fixtures/upstream/lost_in_handoff.yaml
+#   python scripts/hop_decay.py traces/lost_in_handoff_fresh.jsonl --rounds 5
 #
 # Mock negative control:
 #   set `agents.llm_model: mock` and re-run, or inspect the committed
@@ -30,7 +31,7 @@ agents:
   count: 6
   brain: llm
   llm_provider: anthropic
-  llm_model: claude-sonnet-4-20250514
+  llm_model: claude-sonnet-4-6
   template: lost-in-handoff
   roles:
     - name: buyer
@@ -51,6 +52,11 @@ layers:
   memory: blackboard
   privacy: noop
   datafacts: datafacts_v1
+# NOTE: every layer above is resolved by the runner (runner.py:60-76) and then
+# DROPPED — all six shell factories accept `plugins` and none read it. An
+# LLM-brained scenario therefore runs with no trust, no datafacts, and no
+# identity regardless of what this block says. Upstream defect; reported
+# separately from the measurement.
 
 task:
   type: marketplace
@@ -67,4 +73,4 @@ metrics:
   - message_count
 
 output:
-  trace: ./traces/lost_in_handoff.jsonl
+  trace: ./traces/lost_in_handoff_fresh.jsonl
