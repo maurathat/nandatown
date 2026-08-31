@@ -8,7 +8,11 @@ unverified and the rendered-prompt gate is FAIL.
 - Pre-rebase commit: `6b8c5c6d820a8eb2ef562b9a08c95e8c39f27692`
 - Upstream base: `717616365abfc7ef0fe87b0195aaa1e840e4a74a`
 - rebased_base: `3435f272a81cd16fd46555df43e5093c4a02b44f`
-- Publication tip: not yet created. Once the fixture/report/verification corrections are committed on a new public ref, record that new tip separately; `3435f27` remains the rebased base and must not be represented as the final publication tip.
+- Publication tip: the commit on the public ref `lost-in-handoff-clean-rebased`
+  that adds this record's ref-restoration note. Its SHA is not embedded here — a
+  commit cannot contain its own hash — and should be read from the remote ref.
+  `3435f272a81cd16fd46555df43e5093c4a02b44f` remains the rebased base and must not
+  be represented as the publication tip.
 - Conflict: Git relocated the added scenario from `scenarios/` to
   `tests/fixtures/upstream/` after upstream removed the scenario corpus. This
   record previously stated that the scenario contents were not changed. That
@@ -33,6 +37,14 @@ unverified and the rendered-prompt gate is FAIL.
   `tests/fixtures/upstream/lost_in_handoff.yaml`, `tests/test_hop_decay.py`,
   `traces/lost_in_handoff_fresh.jsonl`, and `traces/lost_in_handoff_mock.jsonl`.
 - `git diff 7176163 -- templates/agents/marketplace-buyer.yaml templates/agents/marketplace-seller.yaml packages/nest-shell/nest_shell/llm.py` was empty.
+
+**Ref restoration.** `lost-in-handoff` was absent from the remote when this record
+was written; the local branch was intact at
+`78dbde5c5163e2bbbb34d18c1731d9de6438c3e0` and the commit object remained
+reachable server-side by SHA. The ref was recreated server-side from that
+surviving commit object on 2026-08-30, at the same commit, with contents
+unchanged. No history was rewritten. This record previously implied the ref had
+been continuously published; that was incorrect.
 
 **Publication coverage.** This verification record covers the commit that adds this record
 and the packet state contained in that commit. If later commits exist on this branch, they
